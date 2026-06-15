@@ -1,0 +1,13 @@
+# Dependências da interface web (web_interface.py).
+# A geração de vídeo roda no ComfyUI (ambiente comfyui-env, com requirements próprio).
+# Versões congeladas do ambiente funcional em 2026-06-14 (Python 3.12, DGX Spark).
+#
+# Instalar:  pip install -r requirements.txt
+
+fastapi==0.129.0
+uvicorn==0.41.0
+pydantic==2.12.5
+requests==2.32.5
+python-multipart==0.0.22   # uploads de imagem (I2V) em v4.1/v4.2
+websocket-client==1.9.0    # progresso real via WebSocket do ComfyUI (v4+)
+aiofiles==25.1.0

@@ -1,0 +1,94 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+comfyui-env/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.bak
+
+# Outputs
+outputs/
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Models (grandes demais para git)
+models/
+*.safetensors
+*.ckpt
+*.pth
+*.pt
+*.gguf
+*.onnx
+
+# Large cloned repositories / app + models (not part of this project, too big for git)
+ComfyUI/
+comfyui-env/
+dgx-spark-playbooks/
+
+# Logs
+*.log
+logs/
+*.jsonl
+
+# Benchmark results
+benchmark_results_*.json
+
+# Cache
+.cache/
+*.cache
+.huggingface/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
