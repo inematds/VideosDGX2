@@ -84,6 +84,68 @@ Rode qualquer script com `--help` para todas as opções.
 
 ---
 
+## Adicionar LTX-2.3 (opcional — vídeo + áudio com lipsync)
+
+O **LTX-2.3** (Lightricks, **22B**) gera **vídeo e áudio sincronizados num único modelo**,
+com **lipsync nativo** e pipeline de **2 estágios** (baixa resolução + upscale). É um add-on
+opcional ao stack Wan 2.2 — **não vem instalado** (o LTX-2 19B antigo foi removido na
+reorganização). Hoje só roda via **ComfyUI** (o Diffusers ainda não suporta a 2.3).
+
+### Pré-requisitos (a máquina já atende)
+
+| Requisito | Mínimo | DGX Spark |
+|---|---|---|
+| Python | ≥ 3.12 | 3.12.3 ✅ |
+| CUDA | > 12.7 | toolkit 13.0 ✅ |
+| PyTorch | ~2.7 | 2.10.0+cu130 ✅ |
+| Memória (22B ≈ 55–75 GB em uso) | — | 128 GB unificada ✅ |
+| Disco | ~80 GB (essencial) | ✅ |
+
+### Arquivos a baixar (~80 GB essencial)
+
+| Arquivo | Pasta (`ComfyUI/models/`) | Tamanho | Repo HF |
+|---|---|---|---|
+| `ltx-2.3-22b-distilled-1.1.safetensors` (recomendado, áudio melhor) | `checkpoints/` | ~46 GB | `Lightricks/LTX-2.3` |
+| Gemma 3 12B QAT (text encoder, **gated**) | `text_encoders/gemma-3-12b-it-qat-q4_0-unquantized/` | ~23 GB | `google/gemma-3-12b-it-qat-q4_0-unquantized` |
+| `ltx-2.3-22b-distilled-lora-384-1.1.safetensors` | `loras/` | ~7.6 GB | `Lightricks/LTX-2.3` |
+| `…-spatial-upscaler-x2-1.1` + `…-x1.5-1.0` + `…-temporal-upscaler-x2-1.0` | `latent_upscale_models/` | ~3 GB | `Lightricks/LTX-2.3` |
+
+> Para qualidade máxima / fine-tuning, use `ltx-2.3-22b-dev.safetensors` (46 GB, bf16) no
+> lugar da distilled. Kit completo (todos os checkpoints) ≈ 250 GB.
+
+### Passos
+
+```bash
+COMFYUI="$(pwd)/ComfyUI"
+source comfyui-env/bin/activate
+
+# 1. Custom node (ou via ComfyUI Manager → Install/Update "LTXVideo")
+git clone https://github.com/Lightricks/ComfyUI-LTXVideo "$COMFYUI/custom_nodes/ComfyUI-LTXVideo"
+pip install -r "$COMFYUI/custom_nodes/ComfyUI-LTXVideo/requirements.txt"
+
+# 2. transformers precisa estar >= 4.47.2 e < 4.52.0 (limite superior é crítico)
+pip show transformers
+
+# 3. Pasta nova dos upscalers
+mkdir -p "$COMFYUI/models/latent_upscale_models"
+
+# 4. Login no HF (Gemma é gated — aceitar a licença no site primeiro) e baixar
+huggingface-cli login
+huggingface-cli download Lightricks/LTX-2.3 ltx-2.3-22b-distilled-1.1.safetensors --local-dir "$COMFYUI/models/checkpoints/"
+huggingface-cli download Lightricks/LTX-2.3 ltx-2.3-22b-distilled-lora-384-1.1.safetensors --local-dir "$COMFYUI/models/loras/"
+huggingface-cli download Lightricks/LTX-2.3 ltx-2.3-spatial-upscaler-x2-1.1.safetensors ltx-2.3-spatial-upscaler-x1.5-1.0.safetensors ltx-2.3-temporal-upscaler-x2-1.0.safetensors --local-dir "$COMFYUI/models/latent_upscale_models/"
+huggingface-cli download google/gemma-3-12b-it-qat-q4_0-unquantized --local-dir "$COMFYUI/models/text_encoders/gemma-3-12b-it-qat-q4_0-unquantized/"
+
+# 5. Reiniciar o ComfyUI e abrir um workflow de exemplo do node
+```
+
+**Notas (ARM64 + Blackwell GB10):** flash-attention e os q8 kernels compilam on-the-fly via
+`ninja` (já funcionava no LTX-2 anterior); se a compilação falhar, o ComfyUI cai para o
+attention padrão (mais lento, mas funciona). Memória **não** é gargalo (o 19B de 41 GB já
+rodava aqui).
+
+---
+
 ## Estrutura do projeto
 
 ```
