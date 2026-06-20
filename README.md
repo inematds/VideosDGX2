@@ -130,11 +130,12 @@ pip show transformers
 mkdir -p "$COMFYUI/models/latent_upscale_models"
 
 # 4. Login no HF (Gemma é gated — aceitar a licença no site primeiro) e baixar
-huggingface-cli login
-huggingface-cli download Lightricks/LTX-2.3 ltx-2.3-22b-distilled-1.1.safetensors --local-dir "$COMFYUI/models/checkpoints/"
-huggingface-cli download Lightricks/LTX-2.3 ltx-2.3-22b-distilled-lora-384-1.1.safetensors --local-dir "$COMFYUI/models/loras/"
-huggingface-cli download Lightricks/LTX-2.3 ltx-2.3-spatial-upscaler-x2-1.1.safetensors ltx-2.3-spatial-upscaler-x1.5-1.0.safetensors ltx-2.3-temporal-upscaler-x2-1.0.safetensors --local-dir "$COMFYUI/models/latent_upscale_models/"
-huggingface-cli download google/gemma-3-12b-it-qat-q4_0-unquantized --local-dir "$COMFYUI/models/text_encoders/gemma-3-12b-it-qat-q4_0-unquantized/"
+#    CLI atual = `hf` (huggingface_hub recente; o antigo `huggingface-cli` foi descontinuado)
+hf auth login
+hf download Lightricks/LTX-2.3 ltx-2.3-22b-distilled-1.1.safetensors --local-dir "$COMFYUI/models/checkpoints/"
+hf download Lightricks/LTX-2.3 ltx-2.3-22b-distilled-lora-384-1.1.safetensors --local-dir "$COMFYUI/models/loras/"
+hf download Lightricks/LTX-2.3 ltx-2.3-spatial-upscaler-x2-1.1.safetensors ltx-2.3-spatial-upscaler-x1.5-1.0.safetensors ltx-2.3-temporal-upscaler-x2-1.0.safetensors --local-dir "$COMFYUI/models/latent_upscale_models/"
+hf download google/gemma-3-12b-it-qat-q4_0-unquantized --local-dir "$COMFYUI/models/text_encoders/gemma-3-12b-it-qat-q4_0-unquantized/"
 
 # 5. Reiniciar o ComfyUI e abrir um workflow de exemplo do node
 ```
