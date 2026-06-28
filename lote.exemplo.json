@@ -1,0 +1,18 @@
+[
+  {
+    "model": "wan22_5b",
+    "prompt": "um gato astronauta flutuando dentro da ISS, janela com a Terra ao fundo, cinematic",
+    "width": 1280, "height": 720, "frames": 33, "cfg": 6.0, "seed": -1
+  },
+  {
+    "model": "wan22_14b",
+    "prompt": "cidade cyberpunk à noite, chuva, reflexos de neon nas poças, câmera lenta",
+    "width": 1280, "height": 704, "frames": 81, "cfg": 3.5, "seed": -1,
+    "steps": 30, "split_step": 15
+  },
+  {
+    "model": "ltx23",
+    "prompt": "ocean waves crashing at sunset, seagulls, ambient beach sound",
+    "width": 768, "height": 512, "frames": 73, "cfg": 3.0, "seed": -1
+  }
+]

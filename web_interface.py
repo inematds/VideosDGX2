@@ -35,12 +35,14 @@ COMFYUI_URL    = "http://127.0.0.1:8188"
 VRAM_ESTIMATE = {
     "wan22_14b": 90,
     "wan22_5b":  25,
+    "ltx23":     70,
 }
 
 SCRIPTS = {
     "wan22_5b":      BASE_DIR / "gerar_video_wan22_5b.py",
     "wan22_5b_i2v":  BASE_DIR / "gerar_video_wan22_5b_i2v.py",
     "wan22_14b":     BASE_DIR / "gerar_video_wan22_14b.py",
+    "ltx23":         BASE_DIR / "gerar_video_ltx23.py",
 }
 
 jobs = {}
@@ -168,10 +170,14 @@ def build_cmd(job_id: str, req):
         base += ["--steps", str(req.steps), "--split-step", str(req.split_step)]
         return base
 
+    elif req.model == "ltx23":
+        base += ["--negative", req.negative]
+        return base
+
 
 def estimate_seconds(req) -> int:
     """Estimativa grosseira de segundos de geração baseada em frames e modelo."""
-    factors = {"wan22_14b": 6, "wan22_5b": 2}
+    factors = {"wan22_14b": 6, "wan22_5b": 2, "ltx23": 5}
     return req.frames * factors.get(req.model, 4)
 
 
@@ -484,6 +490,11 @@ async def home():
       <div class="model-name">Wan 2.2 5B</div>
       <div class="model-desc">Leve · T2V + I2V · ~2 min</div>
     </div>
+    <div class="model-btn" onclick="selectModel('ltx23', this)">
+      <span class="model-badge badge-audio">ÁUDIO</span>
+      <div class="model-name">LTX-2.3 22B</div>
+      <div class="model-desc">Vídeo + áudio + lipsync · ~5 min</div>
+    </div>
   </div>
 
   <!-- Image upload (só aparece para Wan 2.2 5B) -->
@@ -588,10 +599,15 @@ const MODEL_PRESETS = {
     { label:'720P · 2s',  w:1280, h:720, f:33,  cfg:6.0, steps:20, split:10 },
     { label:'480P · 5s',  w:720,  h:480, f:80,  cfg:6.0, steps:20, split:10 },
   ],
+  ltx23: [
+    { label:'512P · 2s',  w:512,  h:512, f:49,  cfg:3.0, steps:8, split:0 },
+    { label:'768P · 3s',  w:768,  h:512, f:73,  cfg:3.0, steps:8, split:0 },
+    { label:'HD · 5s',    w:1024, h:576, f:121, cfg:3.0, steps:8, split:0 },
+  ],
 };
 
-const MODEL_LABELS = { wan22_5b:'Wan 2.2 5B', wan22_14b:'Wan 2.2 14B MoE' };
-const VRAM_MAP     = { wan22_14b:'~90 GB', wan22_5b:'~25 GB' };
+const MODEL_LABELS = { wan22_5b:'Wan 2.2 5B', wan22_14b:'Wan 2.2 14B MoE', ltx23:'LTX-2.3 22B' };
+const VRAM_MAP     = { wan22_14b:'~90 GB', wan22_5b:'~25 GB', ltx23:'~70 GB' };
 
 function selectModel(model, el) {
   currentModel = model;
@@ -1143,6 +1159,7 @@ if __name__ == "__main__":
     print("  Modelos disponíveis:")
     print("  - Wan 2.2 14B MoE (qualidade máxima)")
     print("  - Wan 2.2 5B     (rápido, híbrido T2V+I2V)")
+    print("  - LTX-2.3 22B    (vídeo + áudio + lipsync)")
     print()
     print("  Novidades v4.2:")
     print("  - Múltiplos jobs em fila (queued → processing → completed)")
